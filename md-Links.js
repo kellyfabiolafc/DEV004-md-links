@@ -1,5 +1,6 @@
 import pathModule from 'path';
 import fs from 'fs';
+import https from 'https';
 /* Esta función recibe una ruta y opciones, y retorna una promesa que resuelve a un array de objetos con información de los links 
 encontrados en la ruta.*/
 export const mdLinks = (pathArg, options) => {
@@ -30,31 +31,79 @@ export const mdLinks = (pathArg, options) => {
 };
 /* Esta función recibe una ruta de un archivo y retorna una promesa que resuelve a un array de objetos con información de los links
  encontrados en el archivo.*/
-const extractLinksFromFile = (filePath) => {
-    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, 'utf8', (err, data) => {
-                 // Si hay un error al leer el archivo, se rechaza la promesa con un error.
-        if (err) {
-          return reject(err);
-        }
+// const extractLinksFromFile = (filePath) => {
+//     return new Promise((resolve, reject) => {
+//       fs.readFile(filePath, 'utf8', (err, data) => {
+//                  // Si hay un error al leer el archivo, se rechaza la promesa con un error.
+//         if (err) {
+//           return reject(err);
+//         }
   
-        const regex = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/gm;
-        const links = [];
+//         const regex = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/gm;
+//         const links = [];
   
-        let match;
-        while ((match = regex.exec(data)) !== null) {
-          // Se extrae la información de los links y se agrega al array de links.
-          links.push({
-            href: match[2],
-            text: match[1],
-            file: filePath,
+//         let match;
+//         while ((match = regex.exec(data)) !== null) {
+//           // Se extrae la información de los links y se agrega al array de links.
+//           links.push({
+//             href: match[2],
+//             text: match[1],
+//             file: filePath,
+//           });
+//         }
+  
+//         resolve(links);
+//       });
+//     });
+//   };
+const extractLinksFromFile = (filePath, options) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+
+      // const regex = /\[([^\]]+)\]\((http[s]?:\/\/[^\)]+)\)/gm;
+      // const regex = /\[([^\]]+)\]\((https:\/\/[^\)]+)\)/gm;
+      const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
+      
+      const links = [];
+
+      let match;
+      while ((match = regex.exec(data)) !== null) {
+        links.push({
+          href: match[2],
+          text: match[1],
+          file: filePath,
+        });
+      }
+
+      if (options && options.validate) {
+        const promises = links.map((url) => {
+          return new Promise((resolve) => {
+            https.get(url, (res)   => {
+              url.status = res.statusCode;
+              url.ok = res.statusCode >= 200 && res.statusCode < 300;
+              resolve(link);
+            }).on('error', () => {
+              url.status = 'Error';
+              url.ok = false;
+              resolve(url);
+            });
           });
-        }
-  
+        });
+
+        Promise.all(promises)
+          .then((links) => {
+            resolve(links);
+          })
+          .catch((err) => reject(err));
+      } else {
         resolve(links);
-      });
+      }
     });
-  };
+  });
+};
 /* Esta función recibe una ruta de un directorio y opciones, y retorna una promesa que resuelve a un array
  de objetos con información de los links encontrados en los archivos Markdown del directorio y sus subdirectorios.*/
 const extractLinksFromDirectory = (dirPath, options) => {
