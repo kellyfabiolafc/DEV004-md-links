@@ -3,7 +3,7 @@ import chalk from 'chalk';
 
 
 const ruta = './README.MD';
-const opciones = { validate: true };
+const opciones = { validate: false };
 
 
 console.log(); // línea vacía
