@@ -1,8 +1,8 @@
-import { mdLinks } from "./mdlinks.js";
+import { mdLinks } from './md-Links.js';
 import chalk from 'chalk';
 
 
-const ruta = './DEV004-MD-LINKS';
+const ruta = './README.MD';
 const opciones = { validate: true };
 
 
