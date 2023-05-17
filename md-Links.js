@@ -31,6 +31,23 @@ export const mdLinks = (pathArg, options) => {
   });
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Si hay un error al leer la ruta, se rechaza la promesa con un error.
       // if (err) {
       //   return reject(new Error(`La ruta ${absolutePath} no existe`));
