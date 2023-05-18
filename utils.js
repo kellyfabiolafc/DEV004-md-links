@@ -60,16 +60,21 @@ export const extractLinksFromFile = (filePath, options) => {
           const promises = links.map((link) => {
             return new Promise((resolve) => {
               fetch(link.href)
-                .then((res) => {
-                  link.status = res.status;
-                  link.ok = res.ok;
-                  resolve(link);
-                })
-                .catch(() => {
-                  link.status = 'Error';
-                  link.ok = false;
-                  resolve(link);
-                });
+              .then((res) => {
+                link.status = res.status;
+                link.ok = res.statusText;
+                resolve(link);
+              })
+              .catch((err) => {
+                if (err.response) {
+                    link.status = err.response.status;
+                    link.ok = err.response.statusText;
+                } else {
+                  link.status = 500;
+                  link.ok = 'Internal Server Error';
+                }
+                resolve(link);
+              });
             });
           });
 
@@ -139,16 +144,3 @@ export const extractLinksFromFile = (filePath, options) => {
       });
     });
   };
-  // Función para simular una barra de carga animada
-export const showLoading = () => {
-  let i = 0;
-  const interval = setInterval(() => {
-    i = (i + 1) % 4;
-    const dots = '.'.repeat(i);
-    const loadingText = chalk.green(`Cargando${dots}`).padStart(process.stdout.columns / 2);;
-    process.stdout.write(`${loadingText}\r`);
-  }, 300);
-
-  return interval;
-};
-

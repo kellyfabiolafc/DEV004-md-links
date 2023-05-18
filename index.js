@@ -1,51 +1,49 @@
 import {mdLinks}   from './md-Links.js';
-import { showLoading } from './utils.js'
 import chalk from 'chalk';
+import ora from 'ora';
 
-// 'C:/Users/CRISTEL/Desktop/DEV004-md-links'
-const ruta = './README.md';
- 
+const ruta = './Archivo.md';
 const opciones = { validate: true };
 
 console.log(); // línea vacía
 console.log(chalk.hex('#FF69B4').bold('\t\t\t\t\t     Md Links \n'));
 console.log(chalk.hex('#A9D6E5').bold('\t\t\t\t\t De Fabiola Flores \n\n'));
 
+const spinner = ora({
+  text: chalk.hex('#975AB6')('Cargando...'),
+  spinner: 'moon'
+}).start();
 
-const loadingInterval = showLoading(); // Mostrar mensaje de carga
 
+//Llamamos a la funcion y pasamos los parametros correspondientes
 mdLinks(ruta, opciones )
 .then((links) => { 
-  clearInterval(loadingInterval);
-  process.stdout.clearLine(); // Limpiar la línea actual en la consola
-  process.stdout.cursorTo(0); // Mover el cursor al principio de la línea
-  links.forEach((link) => {
-    console.log(chalk.hex('#FF69B4')(`Href: ${chalk.blue(link.href)}`)); // Imprimir el enlace en color azul
-    console.log(chalk.hex('#FF69B4')(`Text: ${chalk.blue(link.text)}`)); 
-    console.log(chalk.hex('#FF69B4')(`File: ${chalk.blue(link.file)}`)); 
- 
+  spinner.stop(); // Detener el spinner
+  console.log(chalk.hex('#975AB6').bold('Links encontrados' +  '\u2193'));// Mostrar mensaje de carga exitosa
+  console.log('-'.repeat(100)); // Imprime una línea de guiones repetidos
+    links.forEach((link) => {
+      
+      const hrefText = chalk.bgHex('#B6E2D3').hex('#E95F83').bold(' Href:   ') + '  \u2192  ' + chalk.hex('#B6E2D3')(link.href);
+      const textText = chalk.bgHex('#FFB7C9').hex('#FFFFFF').bold(' Text:   ') + '  \u2192  ' + chalk.hex('#FFB7C9')(link.text);
+      const fileText = chalk.bgHex('#FDE2CD').hex('#FFFFFF').bold(' File:   ') + '  \u2192  ' + chalk.hex('#FDE2CD')(link.file);
+      console.log(hrefText);
+      console.log(textText);
+      console.log(fileText);
 
-    // Verificar si se deben mostrar los campos status y ok
-    if (link.status !== undefined && link.ok !== undefined) {
-      console.log(chalk.hex('#FF69B4')(`Status: ${chalk.green(link.status)}`)); // Imprimir el status del enlace en color rosa
-      console.log(chalk.hex('#FF69B4')(`Ok: ${chalk.green(link.ok)}`)); // Imprimir el campo ok del enlace en color rosa
-    }
-
-    console.log(''); // Imprimir una línea en blanco entre cada enlace
-  });
-
-  console.log(chalk.bgHex('#7FFF7F').hex('#FFFFFF')('\t\t\t\t\t Peticion cargada con exito! \n\n'));// Mostrar mensaje de carga exitosa
+      // Verificar si se deben mostrar los campos status y ok
+      if (link.status !== undefined && link.ok !== undefined) {
+        const statusText = chalk.bgHex('#EF7C8E').bold(' Status: ') + '  \u2192  '+chalk.hex('#E95F83')(link.status);
+        const okText = chalk.bgHex('#616D69').bold(' Message:') +'  \u2192  '+  chalk.hex('#616D69')(link.ok);
+        console.log(statusText);
+        console.log(okText);
+      }
+      console.log('-'.repeat(100)); // Imprime una línea de guiones repetidos
+    });
+    console.log(); // línea vacía
+console.log(chalk.hex('#975AB6').bold('\t\t\t\t  Peticion cargada con exito! \n'));// Mostrar mensaje de carga exitosa
 })
-.catch((err) => console.error(err));
+.catch((err) => {
+  spinner.stop(); // Detener el spinner en caso de error
+  console.error(err);
+});
 
-
-
-
-  // .then((links) => {
-  //   links.forEach((link) => {
-  //     console.log(chalk.blue(link.href)); // Imprimir el enlace en color azul
-  //     console.log(chalk.gray(link.text)); // Imprimir el texto del enlace en color gris
-  //     console.log(chalk.green(link.file)); // Imprimir el estado del enlace en color verde
-  //     console.log(''); // Imprimir una línea en blanco entre cada enlace
-  //   });
-  // })
