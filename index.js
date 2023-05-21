@@ -2,7 +2,7 @@ import {mdLinks}   from './md-Links.js';
 import chalk from 'chalk';
 import ora from 'ora';
 
-const ruta = './Archivo.md';
+const ruta = './archivoPrueba';
 const opciones = { validate: true };
 
 console.log(); // línea vacía

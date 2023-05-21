@@ -1,9 +1,7 @@
 // import https from "https";
 import fs from "fs";
 import pathModule from "path";
-import fetch from "node-fetch"
-import chalk from "chalk";
-// import { resolve } from "dns";
+import fetch from "node-fetch";
 
 export const getAbsolutePath = (pathArg) => {
   return pathModule.isAbsolute(pathArg) ? pathArg : pathModule.resolve(pathArg);
@@ -14,7 +12,7 @@ export const getStats = (routeAbsolute) => {
     fs.stat(routeAbsolute, (err, stats) => {
       // Si hay un error al leer la ruta, se rechaza la promesa con un error.
       if (err) {
-       reject(new Error(`La ruta ${routeAbsolute} no existe`));;
+        reject(new Error(`La ruta ${routeAbsolute} no existe`));
       }
       resolve(stats);
     });
@@ -23,20 +21,16 @@ export const getStats = (routeAbsolute) => {
 
 const readFile = (filePath) => {
   //retronar una promesa
-  return new Promise ((resolve, reject)=> {
+  return new Promise((resolve, reject) => {
     fs.readFile(filePath, "utf8", (err, data) => {
-        if (err) {
-          reject(err);
-        }
-        //resolve
-        resolve(data);
-      });
-  })
-  
+      if (err) {
+        reject(err);
+      }
+      //resolve
+      resolve(data);
+    });
+  });
 };
-
-
-
 
 /*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
 export const extractLinksFromFile = (filePath, options) => {
@@ -60,21 +54,21 @@ export const extractLinksFromFile = (filePath, options) => {
           const promises = links.map((link) => {
             return new Promise((resolve) => {
               fetch(link.href)
-              .then((res) => {
-                link.status = res.status;
-                link.ok = res.statusText;
-                resolve(link);
-              })
-              .catch((err) => {
-                if (err.response) {
+                .then((res) => {
+                  link.status = res.status;
+                  link.ok = res.statusText;
+                  resolve(link);
+                })
+                .catch((err) => {
+                  if (err.response) {
                     link.status = err.response.status;
                     link.ok = err.response.statusText;
-                } else {
-                  link.status = 500;
-                  link.ok = 'Internal Server Error';
-                }
-                resolve(link);
-              });
+                  } else {
+                    link.status = 500;
+                    link.ok = "Internal Server Error";
+                  }
+                  resolve(link);
+                });
             });
           });
 
@@ -91,56 +85,54 @@ export const extractLinksFromFile = (filePath, options) => {
   });
 };
 
-/* Esta función recibe una ruta de un directorio y opciones, y retorna una promesa que resuelve a un array
-   de objetos con información de los links encontrados en los archivos Markdown del directorio y sus subdirectorios.*/
-   export const extractLinksFromDirectory = (dirPath, options) => {
-    return new Promise((resolve, reject) => {
-      readDir(dirPath)
-        .then((files) => {
-          const promises = files.map((file) => {
-            const filePath = pathModule.join(dirPath, file);
-  
-            return new Promise((resolve) => {
-              getStats(filePath)
-                .then((stats) => {
-                  if (stats.isDirectory()) {
-                    extractLinksFromDirectory(filePath, options)
-                      .then((links) => resolve(links))
-                      .catch(() => resolve([]));
-                  } else if (stats.isFile() && path.extname(file) === '.md') {
-                    extractLinksFromFile(filePath, options)
-                      .then((links) => resolve(links))
-                      .catch(() => resolve([]));
-                  } else {
-                    resolve([]);
-                  }
-                })
-                .catch((err) => {
-                  // Si hay un error al leer el archivo, simplemente lo ignoramos
-                  resolve([]);
-                });
-            });
+export const extractLinksFromDirectory = (dirPath, options) => {
+  return new Promise((resolve, reject) => {
+    readDir(dirPath).then((files) => {
+      const promises = files.map((file) => {
+        const filePath = pathModule.join(dirPath, file);
+
+        return new Promise((resolve) => {
+          getStats(filePath).then((stats) => {
+            //   if (err) {
+            //   // Si hay un error al leer el archivo, simplemente lo ignoramos
+            //   resolve([]);
+            // } else
+            if (stats.isDirectory()) {
+              // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
+              extractLinksFromDirectory(filePath, options)
+                .then((links) => resolve(links))
+                .catch(() => resolve([]));
+            } else if (stats.isFile() && pathModule.extname(file) === ".md") {
+              // Si el archivo es un archivo Markdown, llamamos a extractLinksFromFile
+              extractLinksFromFile(filePath, options)
+                .then((links) => resolve(links))
+                .catch(() => resolve([]));
+            } else {
+              // Si el archivo no es un archivo Markdown, simplemente lo ignoramos
+              resolve([]);
+            }
           });
-  
-          Promise.all(promises)
-            .then((results) => {
-              const links = results.flat();
-              resolve(links);
-            })
-            .catch((err) => reject(err));
+        });
+      });
+
+      Promise.all(promises)
+        .then((results) => {
+          const links = results.flat();
+          resolve(links);
         })
         .catch((err) => reject(err));
     });
-  };
-  
-  const readDir = (dirPath) => {
-    return new Promise((resolve, reject) => {
-      fs.readdir(dirPath, (err, files) => {
-        if (err) {
-          // Si hay un error al leer el directorio, se rechaza la promesa con un error.
-          reject(err);
-        }
-        resolve(files);
-      });
+  });
+};
+
+const readDir = (dirPath) => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dirPath, (err, files) => {
+      if (err) {
+        // Si hay un error al leer el directorio, se rechaza la promesa con un error.
+        reject(err);
+      }
+      resolve(files);
     });
-  };
+  });
+};
