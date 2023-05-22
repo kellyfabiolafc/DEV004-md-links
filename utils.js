@@ -50,8 +50,7 @@ export const extractLinksFromFile = (filePath, options) => {
           links.push(link);
         }
 
-        if (options && options.validate) 
-        {
+        if (options && options.validate) {
           const promises = links.map((link) => {
             return new Promise((resolve) => {
               fetch(link.href)
@@ -75,9 +74,24 @@ export const extractLinksFromFile = (filePath, options) => {
 
           Promise.all(promises)
             .then((validatedLinks) => {
-              resolve(validatedLinks);
+              if (options && options.stats) {
+                const stats = {
+                  Total: validatedLinks.length,
+                  Unique: new Set(validatedLinks.map((link) => link.href)).size,
+                  Broken: validatedLinks.filter((link) => link.status !== 200).length,
+                };
+                resolve(stats);
+              } else {
+                resolve(validatedLinks);
+              }
             })
             .catch((err) => reject(err));
+        } else if (options && options.stats) {
+          const stats = {
+            Total: links.length,
+            Unique: new Set(links.map((link) => link.href)).size,
+          };
+          resolve(stats);
         } else {
           resolve(links);
         }
