@@ -50,7 +50,8 @@ export const extractLinksFromFile = (filePath, options) => {
           links.push(link);
         }
 
-        if (options && options.validate) {
+        if (options && options.validate) 
+        {
           const promises = links.map((link) => {
             return new Promise((resolve) => {
               fetch(link.href)
@@ -93,10 +94,6 @@ export const extractLinksFromDirectory = (dirPath, options) => {
 
         return new Promise((resolve) => {
           getStats(filePath).then((stats) => {
-            //   if (err) {
-            //   // Si hay un error al leer el archivo, simplemente lo ignoramos
-            //   resolve([]);
-            // } else
             if (stats.isDirectory()) {
               // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
               extractLinksFromDirectory(filePath, options)
@@ -124,6 +121,8 @@ export const extractLinksFromDirectory = (dirPath, options) => {
     });
   });
 };
+
+
 
 const readDir = (dirPath) => {
   return new Promise((resolve, reject) => {

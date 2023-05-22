@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 
 const ruta = './archivoPrueba';
-const opciones = { validate: true };
+const opciones = { validate: false };
 
 console.log(); // línea vacía
 console.log(chalk.hex('#FF69B4').bold('\t\t\t\t\t     Md Links \n'));
