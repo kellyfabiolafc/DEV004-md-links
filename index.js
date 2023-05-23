@@ -2,8 +2,8 @@ import {mdLinks}   from './md-Links.js';
 import chalk from 'chalk';
 import ora from 'ora';
 
-const ruta = './archivoPrueba';
-const opciones = { validate:true , stats:true};
+const ruta = 'C:/Users/CRISTEL/Desktop/DEV004-md-links/cli.js';
+const opciones = { validate: true, stats:false};
 
 console.log(); // línea vacía
 console.log(chalk.hex('#FF69B4').bold('\t\t\t\t\t     Md Links \n'));
@@ -15,7 +15,7 @@ const spinner = ora({
 }).start();
 
 //Llamamos a la funcion y pasamos los parametros correspondientes
-mdLinks(ruta, opciones)
+mdLinks(ruta)
   .then((result) => {
     const links = Array.isArray(result) ? result : result.links;
     // const stats = result.stats;
@@ -70,6 +70,6 @@ mdLinks(ruta, opciones)
   })
   .catch((err) => {
     spinner.stop(); // Detener el spinner en caso de error
-    console.error(err);
+    console.log(err);
   });
 

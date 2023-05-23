@@ -1,12 +1,14 @@
-// import https from "https";
+
 import fs from "fs";
 import pathModule from "path";
-import fetch from "node-fetch";
+import 'whatwg-fetch';
 
+//funcion que debería devolver una ruta absoluta
 export const getAbsolutePath = (pathArg) => {
   return pathModule.isAbsolute(pathArg) ? pathArg : pathModule.resolve(pathArg);
 };
 
+//funcion que deberia resolver la promesa con los stats
 export const getStats = (routeAbsolute) => {
   return new Promise((resolve, reject) => {
     fs.stat(routeAbsolute, (err, stats) => {
@@ -106,7 +108,7 @@ export const extractLinksFromDirectory = (dirPath, options) => {
       const promises = files.map((file) => {
         const filePath = pathModule.join(dirPath, file);
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
           getStats(filePath).then((stats) => {
             if (stats.isDirectory()) {
               // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
@@ -117,7 +119,7 @@ export const extractLinksFromDirectory = (dirPath, options) => {
               // Si el archivo es un archivo Markdown, llamamos a extractLinksFromFile
               extractLinksFromFile(filePath, options)
                 .then((links) => resolve(links))
-                .catch(() => resolve([]));
+                .catch(() => reject(new Error(`La ruta ${filePath} no es md`)));
             } else {
               // Si el archivo no es un archivo Markdown, simplemente lo ignoramos
               resolve([]);

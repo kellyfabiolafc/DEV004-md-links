@@ -22,10 +22,8 @@ export const mdLinks = (pathArg, options) => {
           .then((links) => resolve(links))
           .catch((err) => reject(err));
       } else {
+        reject(new Error(`La ruta ${absolutePath} no es un archivo ni un directorio`))
         // Si la ruta no es un archivo ni un directorio, se rechaza la promesa con un error.
-        reject(
-          new Error(`La ruta ${absolutePath} no es un archivo ni un directorio`)
-        );
       }
     });
   });
