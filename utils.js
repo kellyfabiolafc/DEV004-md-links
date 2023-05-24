@@ -35,65 +35,82 @@ const readFile = (filePath) => {
 };
 
 /*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
+// export const extractLinksFromFile = (filePath, options) => {
+//   return new Promise((resolve, reject) => {
+//     readFile(filePath)
+//       .then((content) => {
+//         const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
+//         const links = [];
+
+//         let match;
+//         while ((match = regex.exec(content)) !== null) {
+//           const link = {
+//             href: match[2],
+//             text: match[1],
+//             file: filePath,
+//           };
+//           links.push(link);
+//         }
+
+//         if (options && options.validate) {
+//           const promises = links.map((link) => {
+//             return new Promise((resolve) => {
+//               fetch(link.href)
+//                 .then((res) => {
+//                   link.status = res.status;
+//                   link.ok = res.statusText;
+//                   resolve(link);
+//                 })
+//                 .catch((err) => {
+//                   if (err.response) {
+//                     link.status = err.response.status;
+//                     link.ok = err.response.statusText;
+//                   } else {
+//                     link.status = 500;
+//                     link.ok = "Internal Server Error";
+//                   }
+//                   resolve(link);
+//                 });
+//             });
+//           });
+
+//           Promise.all(promises)
+//             .then((validatedLinks) => {
+//               if (options && options.stats) {
+//                 const stats = {
+//                   Total: validatedLinks.length,
+//                   Unique: new Set(validatedLinks.map((link) => link.href)).size,
+//                   Broken: validatedLinks.filter((link) => link.status !== 200).length,
+//                 };
+//                 resolve(stats);
+//               } else {
+//                 resolve(validatedLinks);
+//               }
+//             })
+//             .catch((err) => reject(err));
+//         } else if (options && options.stats) {
+//           const stats = {
+//             Total: links.length,
+//             Unique: new Set(links.map((link) => link.href)).size,
+//           };
+//           resolve(stats);
+//         } else {
+//           resolve(links);
+//         }
+//       })
+//       .catch((err) => reject(err));
+//   });
+// };
 export const extractLinksFromFile = (filePath, options) => {
   return new Promise((resolve, reject) => {
     readFile(filePath)
       .then((content) => {
-        const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
-        const links = [];
-
-        let match;
-        while ((match = regex.exec(content)) !== null) {
-          const link = {
-            href: match[2],
-            text: match[1],
-            file: filePath,
-          };
-          links.push(link);
-        }
+        const links = findLinks(content, filePath);
 
         if (options && options.validate) {
-          const promises = links.map((link) => {
-            return new Promise((resolve) => {
-              fetch(link.href)
-                .then((res) => {
-                  link.status = res.status;
-                  link.ok = res.statusText;
-                  resolve(link);
-                })
-                .catch((err) => {
-                  if (err.response) {
-                    link.status = err.response.status;
-                    link.ok = err.response.statusText;
-                  } else {
-                    link.status = 500;
-                    link.ok = "Internal Server Error";
-                  }
-                  resolve(link);
-                });
-            });
-          });
-
-          Promise.all(promises)
-            .then((validatedLinks) => {
-              if (options && options.stats) {
-                const stats = {
-                  Total: validatedLinks.length,
-                  Unique: new Set(validatedLinks.map((link) => link.href)).size,
-                  Broken: validatedLinks.filter((link) => link.status !== 200).length,
-                };
-                resolve(stats);
-              } else {
-                resolve(validatedLinks);
-              }
-            })
+          validateLinks(links, options)
+            .then(() => resolve(links))
             .catch((err) => reject(err));
-        } else if (options && options.stats) {
-          const stats = {
-            Total: links.length,
-            Unique: new Set(links.map((link) => link.href)).size,
-          };
-          resolve(stats);
         } else {
           resolve(links);
         }
@@ -101,7 +118,65 @@ export const extractLinksFromFile = (filePath, options) => {
       .catch((err) => reject(err));
   });
 };
+export const findLinks = (content, filePath) => {
+  const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
+  const links = [];
+  
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    const link = {
+      href: match[2],
+      text: match[1],
+      file: filePath,
+    };
+    links.push(link);
+  }
+  
+  return links;
+};
 
+
+const validateLinks = (links, options) => {
+  const promises = links.map((link) => {
+    return new Promise((resolve) => {
+      fetch(link.href)
+        .then((res) => {
+          link.status = res.status;
+          link.ok = res.statusText;
+          resolve(link);
+        })
+        .catch((err) => {
+          if (err.response) {
+            link.status = err.response.status;
+            link.ok = err.response.statusText;
+          } else {
+            link.status = 500;
+            link.ok = "Internal Server Error";
+          }
+          resolve(link);
+        });
+    });
+  });
+
+  return Promise.all(promises);
+};
+
+const computeStats = (links, options) => {
+  if (options && options.stats) {
+    const stats = {
+      Total: links.length,
+      Unique: new Set(links.map((link) => link.href)).size
+    };
+
+    if (options.validate) {
+      stats.Broken = links.filter((link) => link.status !== 200).length;
+    }
+
+    return { links, stats }; // Retorna un objeto con las propiedades "links" y "stats"
+  } else {
+    return { links }; // Retorna un objeto con la propiedad "links"
+  }
+};
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
     readDir(dirPath).then((files) => {
@@ -140,7 +215,7 @@ export const extractLinksFromDirectory = (dirPath, options) => {
 
 
 
-const readDir = (dirPath) => {
+export const readDir = (dirPath) => {
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
       if (err) {
@@ -151,3 +226,4 @@ const readDir = (dirPath) => {
     });
   });
 };
+

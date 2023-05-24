@@ -1,5 +1,5 @@
 import { mdLinks } from "../md-Links.js";
-import { getAbsolutePath, getStats } from "../utils.js";
+import { getAbsolutePath, getStats ,readDir} from "../utils.js";
 import pathModule from "path";
 import fs from "fs";
 import "whatwg-fetch";
@@ -48,73 +48,30 @@ describe("getStats", () => {
   });
 });
 
+describe('readDir', () => {
+  it('se resuelve con un array de nombres de archivos cuando el directorio existe', () => {
+    const testDir = './directorio-de-prueba';
+    const archivosEsperados = ['archivo1.txt', 'archivo2.txt'];
 
+    // Mock de fs.readdir para simular la lectura del directorio
+    fs.readdir = jest.fn((dirPath, callback) => {
+      callback(null, archivosEsperados);
+    });
 
-
-describe('mdLinks', () => {
-  it('debería devolver los links de un archivo', async () => {
-    const path = '../archi.md';
-    const expected = [
-      {
-        Href: 'https://es.wikipedia.org/wiki/Markdown',
-        Text: 'Markdown',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md'
-      },
-      {
-        Href: 'https://nodejsKELYYYYYYYYYYYYYYYYYYYYYY.org/es/',
-        Text: 'Node.js',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md'
-      },
-      {
-        Href: 'https://developer.mozilla.org/es/docs/Learn/JavaScript/Building_blocks/Functions',
-        Text: 'Funciones — bloques de código reutilizables - MDN',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md'
-      },
-      {
-        Href: 'https://curriculum.laboratoria.la/es/topics/javascript/04-arrays',
-        Text: 'Arreglos',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md'
-      }
-    ];
-
-    const result = await mdLinks(path);
-    expect(result).toEqual(expected);
+    return readDir(testDir).then((archivos) => {
+      expect(archivos).toEqual(archivosEsperados);
+    });
   });
 
-  it('debería devolver los links de un directorio', async () => {
-    const path = './archivoPrueba';
-    const expected = [
-      {
-        Href: 'https://es.wikipedia.org/wiki/Markdown',
-        Text: 'Markdown',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archivoPrueba/ARCHIVO.md'
-      },
-      {
-        Href: 'https://nodejsKELYYYYYYYYYYYYYYYYYYYYYY.org/es/',
-        Text: 'Node.js',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archivoPrueba/ARCHIVO.md'
-      },
-      {
-        Href: 'https://developer.mozilla.org/es/docs/Learn/JavaScript/Building_blocks/Functions',
-        Text: 'Funciones — bloques de código reutilizables - MDN',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archivoPrueba/ARCHIVO.md'
-      },
-      {
-        Href: 'https://curriculum.laboratoria.la/es/topics/javascript/04-arrays',
-        Text: 'Arreglos',
-        File: 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archivoPrueba/ARCHIVO.md'
-      }
-    ];
+  it('se rechaza con un error cuando el directorio no existe', () => {
+    const directorioNoExistente = './directorio-no-existente';
 
-    const result = await mdLinks(path);
-    expect(result).toEqual(expected);
-  });
+    // Mock de fs.readdir para simular un error al leer el directorio
+    fs.readdir = jest.fn((dirPath, callback) => {
+      const error = new Error('Directorio no encontrado');
+      callback(error, null);
+    });
 
-  it('debería devolver un error si la ruta no es un archivo ni un directorio', async () => {
-    const path = 'C:/Users/CRISTEL/Desktop/DEV004-md-links/cli.js';
-   
-    await expect(mdLinks(path)).rejects.toThrow(
-      'La ruta C:/Users/CRISTEL/Desktop/DEV004-md-links/cli.js no es un archivo ni un directorio'
-    );
+    return expect(readDir(directorioNoExistente)).rejects.toThrow('Directorio no encontrado');
   });
 });

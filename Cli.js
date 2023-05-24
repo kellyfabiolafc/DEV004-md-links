@@ -33,7 +33,7 @@ figlet.text(text, {
   console.log(chalk.hex('#487C5B').bold('\t\t\t\t\t\t\t\   By Fabiola Flores\n'))
   console.log(); // Línea vacía
 
-  if (!path) {
+  if (!path || !validate ) {
     console.log(
       chalk.hex('#A7D2CB')(`Por favor, ingrese una ruta o escriba ${chalk.hex('#D61355').bold('"--help"')} para ver las instrucciones`)
     );
@@ -54,14 +54,14 @@ ${chalk.hex('#B3C58B').inverse('      "--stats"       ')} ${chalk.hex('#B3C58B')
 ${chalk.hex('#D9E0B7').inverse(' "--validate --stats" ')} ${chalk.hex('#D9E0B7').bold(`${txtValYStats}`)}
 `);
   }
-  else if (path) {
+    if (path && validate) {
    //------------------------------------------
     const spinner = ora({
       text: chalk.hex('#975AB6')('Cargando...'),
       spinner: 'line'
     }).start();
    // ------------------------------------------
-    mdLinks(path)
+    mdLinks(path , { validate : true })
       .then((links) => {
         spinner.stop(); // Detener el spinner
         console.log(chalk.hex('#1A3F13').bold('Links encontrados' + '  \u2193')); // Mostrar mensaje de carga exitosa
