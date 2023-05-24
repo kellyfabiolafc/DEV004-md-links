@@ -2,8 +2,8 @@ import {mdLinks}   from './md-Links.js';
 import chalk from 'chalk';
 import ora from 'ora';
 
-const ruta = 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md';
-const opciones = { validate:true , stats:false };
+ const ruta = 'C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md';
+ const opciones = { validate:true , stats:false };
 
 console.log(); // línea vacía
 console.log(chalk.hex('#FF69B4').bold('\t\t\t\t\t     Md Links \n'));
@@ -15,8 +15,9 @@ const spinner = ora({
 }).start();
 
 //Llamamos a la funcion y pasamos los parametros correspondientes
-mdLinks(ruta, opciones)
+mdLinks('C:/Users/CRISTEL/Desktop/DEV004-md-links/archi.md', { validate:true , stats:false } )
   .then((links) => {
+    spinner.stop()
     if (opciones.stats) {
       const statsText = chalk.bgHex('#FFD700').hex('#010101').bold(' Stats:  ') + '\n';
       const totalText = chalk.hex('#FFD700').bold('Total:   ') + ' ' + links.Total;
