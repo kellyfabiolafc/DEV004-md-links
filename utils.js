@@ -48,17 +48,27 @@ export const readFile = (filePath) => {
 };
 
 /*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
-
 export const extractLinksFromFile = (filePath, options) => {
   return new Promise((resolve, reject) => {
     readFile(filePath)
       .then((content) => {
-        const links = findLinks(content, filePath);
-
+      const links = findLinks(content, filePath)
         if (options && options.validate) {
-          validateLinks(links, options)
-            .then(() => resolve(links))
+          const promises = links.map((link) => fetchLinkStatus(link));
+
+          Promise.all(promises)
+            .then((validatedLinks) => {
+              if (options && options.stats) {
+                const stats = getLinkStats(validatedLinks, options);
+                resolve(stats);
+              } else {
+                resolve(validatedLinks);
+              }
+            })
             .catch((err) => reject(err));
+        } else if (options && options.stats) {
+          const stats = getLinkStats(links, options);
+          resolve(stats);
         } else {
           resolve(links);
         }
@@ -66,6 +76,7 @@ export const extractLinksFromFile = (filePath, options) => {
       .catch((err) => reject(err));
   });
 };
+
 
 export const findLinks = (content, filePath) => {
   const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
@@ -83,46 +94,39 @@ export const findLinks = (content, filePath) => {
   
   return links;
 };
-const computeStats = (links, options) => {
-  if (options && options.stats) {
-    const stats = {
-      Total: links.length,
-      Unique: new Set(links.map((link) => link.href)).size
-    };
 
-    if (options.validate) {
-      stats.Broken = links.filter((link) => link.status !== 200).length;
-    }
 
-    return { stats }; // Retorna un objeto con las propiedades "links" y "stats"
-  } else {
-    return { links }; // Retorna un objeto con la propiedad "links"
-  }
-};
-
-export const validateLinks = (links, options) => {
-  const promises = links.map((link) => {
-    return new Promise((resolve) => {
-      fetch(link.href)
-        .then((res) => {
-          link.status = res.status;
-          link.ok = res.statusText;
-          resolve(link);
-        })
-        .catch((err) => {
-          if (err.response) {
-            link.status = err.response.status;
-            link.ok = err.response.statusText;
-          } else {
-            link.status = 500;
-            link.ok = "Internal Server Error";
-          }
-          resolve(link);
-        });
-    });
+const fetchLinkStatus = (link) => {
+  return new Promise((resolve) => {
+    fetch(link.href)
+      .then((res) => {
+        link.status = res.status;
+        link.ok = res.statusText;
+        resolve(link);
+      })
+      .catch((err) => {
+        if (err.response) {
+          link.status = err.response.status;
+          link.ok = err.response.statusText;
+        } else {
+          link.status = 500;
+          link.ok = "Internal Server Error";
+        }
+        resolve(link);
+      });
   });
+};
+const getLinkStats = (links, options) => {
+  const stats = {
+    Total: links.length,
+    Unique: new Set(links.map((link) => link.href)).size,
+  };
 
-  return Promise.all(promises);
+  if (options.validate) {
+    stats.Broken = links.filter((link) => link.status !== 200).length;
+  }
+
+  return stats;
 };
 
 export const extractLinksFromDirectory = (dirPath, options) => {
