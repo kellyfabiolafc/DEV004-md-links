@@ -105,17 +105,13 @@ const fetchLinkStatus = (link) => {
         resolve(link);
       })
       .catch((err) => {
-        if (err.response) {
-          link.status = err.response.status;
-          link.ok = err.response.statusText;
-        } else {
-          link.status = 500;
-          link.ok = "Internal Server Error";
-        }
+        link.status = err.status || 500;
+        link.ok = err.statusText || "Internal Server Error";
         resolve(link);
       });
   });
 };
+
 const getLinkStats = (links, options) => {
   const stats = {
     Total: links.length,
@@ -128,111 +124,51 @@ const getLinkStats = (links, options) => {
 
   return stats;
 };
-
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
-    readDir(dirPath).then((files) => {
-      const promises = files.map((file) => {
-        const filePath = pathModule.join(dirPath, file);
+    readDir(dirPath)
+      .then((files) => {
+        const promises = files.map((file) => {
+          const filePath = pathModule.join(dirPath, file);
 
-        return new Promise((resolve, reject) => {
-          getStats(filePath).then((stats) => {
-            if (stats.isDirectory()) {
-              // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
-              extractLinksFromDirectory(filePath, options)
-                .then((links) => resolve(links))
-                .catch(() => resolve([]));
-            } else if (stats.isFile() && pathModule.extname(file) === ".md") {
-              // Si el archivo es un archivo Markdown, llamamos a extractLinksFromFile
-              extractLinksFromFile(filePath, options)
-                .then((links) => resolve(links))
-                .catch(() => reject(new Error(`La ruta ${filePath} no es md`)));
-            } else {
-              // Si el archivo no es un archivo Markdown, simplemente lo ignoramos
-              resolve([]);
-            }
-          });
+          return getStats(filePath)
+            .then((stats) => {
+              if (isDirectory(stats)) {
+                return extractLinksFromDirectory(filePath, options)
+                  .then((links) => links)
+                  .catch(() => []);
+              } else if (isMarkdownFile(file)) {
+                return extractLinksFromFile(filePath, options)
+                  .then((links) => links)
+                  .catch(() => {
+                    throw new Error(`La ruta ${filePath} no es md`);
+                  });
+              } else {
+                return [];
+              }
+            })
+            .catch((err) => {
+              throw err;
+            });
         });
-      });
 
-      Promise.all(promises)
-        .then((results) => {
-          const links = results.flat();
-          resolve(links);
-        })
-        .catch((err) => reject(err));
-    });
+        Promise.all(promises)
+          .then((results) => {
+            const links = results.flat();
+            resolve(links);
+          })
+          .catch((err) => reject(err));
+      })
+      .catch((err) => reject(err));
   });
+};
+
+const isMarkdownFile = (file) => {
+  return pathModule.extname(file) === ".md";
 };
 
 
 
-
-
-
-// export const extractLinksFromFile = (filePath, options) => {
-//   return new Promise((resolve, reject) => {
-//     readFile(filePath)
-//       .then((content) => {
-//         const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
-//         const links = [];
-
-//         let match;
-//         while ((match = regex.exec(content)) !== null) {
-//           const link = {
-//             href: match[2],
-//             text: match[1],
-//             file: filePath,
-//           };
-//           links.push(link);
-//         }
-
-//         if (options && options.validate) {
-//           const promises = links.map((link) => {
-//             return new Promise((resolve) => {
-//               fetch(link.href)
-//                 .then((res) => {
-//                   link.status = res.status;
-//                   link.ok = res.statusText;
-//                   resolve(link);
-//                 })
-//                 .catch((err) => {
-//                   if (err.response) {
-//                     link.status = err.response.status;
-//                     link.ok = err.response.statusText;
-//                   } else {
-//                     link.status = 500;
-//                     link.ok = "Internal Server Error";
-//                   }
-//                   resolve(link);
-//                 });
-//             });
-//           });
-
-//           Promise.all(promises)
-//             .then((validatedLinks) => {
-//               if (options && options.stats) {
-//                 const stats = {
-//                   Total: validatedLinks.length,
-//                   Unique: new Set(validatedLinks.map((link) => link.href)).size,
-//                   Broken: validatedLinks.filter((link) => link.status !== 200).length,
-//                 };
-//                 resolve(stats);
-//               } else {
-//                 resolve(validatedLinks);
-//               }
-//             })
-//             .catch((err) => reject(err));
-//         } else if (options && options.stats) {
-//           const stats = {
-//             Total: links.length,
-//             Unique: new Set(links.map((link) => link.href)).size,
-//           };
-//           resolve(stats);
-//         } else {
-//           resolve(links);
-//         }
-//       })
-//       .catch((err) => reject(err));
-//   });
-// };
+const isDirectory = (stats) => {
+  return stats.isDirectory();
+};
