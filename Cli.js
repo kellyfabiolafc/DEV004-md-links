@@ -25,7 +25,6 @@ figlet.text(text, {
     console.log('Error al generar el texto ASCII:', err);
     return;
   }
-
   console.log(); // Línea vacía
   console.log(); // Línea vacía
   const pastelPinkText = chalk.hex('#A7E9AF')(data);
@@ -33,7 +32,7 @@ figlet.text(text, {
   console.log(chalk.hex('#487C5B').bold('\t\t\t\t\t\t\t\   By Fabiola Flores\n'))
   console.log(); // Línea vacía
 
-  if (!path || !validate ) {
+  if ( !path ) {
     console.log(
       chalk.hex('#A7D2CB')(`Por favor, ingrese una ruta o escriba ${chalk.hex('#D61355').bold('"--help"')} para ver las instrucciones`)
     );
