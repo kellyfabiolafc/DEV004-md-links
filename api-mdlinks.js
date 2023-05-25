@@ -96,7 +96,7 @@ export const findLinks = (content, filePath) => {
 };
 
 
-const fetchLinkStatus = (link) => {
+export const fetchLinkStatus = (link) => {
   return new Promise((resolve) => {
     fetch(link.href)
       .then((res) => {
@@ -112,7 +112,7 @@ const fetchLinkStatus = (link) => {
   });
 };
 
-const getLinkStats = (links, options) => {
+export const getLinkStats = (links, options) => {
   const stats = {
     Total: links.length,
     Unique: new Set(links.map((link) => link.href)).size,
@@ -124,6 +124,7 @@ const getLinkStats = (links, options) => {
 
   return stats;
 };
+
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
     readDir(dirPath)
@@ -163,12 +164,12 @@ export const extractLinksFromDirectory = (dirPath, options) => {
   });
 };
 
-const isMarkdownFile = (file) => {
+export const isMarkdownFile = (file) => {
   return pathModule.extname(file) === ".md";
 };
 
 
 
-const isDirectory = (stats) => {
+export const isDirectory = (stats) => {
   return stats.isDirectory();
 };

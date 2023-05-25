@@ -3,7 +3,7 @@ import {
   extractLinksFromFile,
   extractLinksFromDirectory,
   getAbsolutePath,getStats
-} from "./utils.js";
+} from "./api-mdlinks.js";
 /* Esta función recibe una ruta y opciones, y retorna una promesa que resuelve a un array de objetos con información de los links 
 encontrados en la ruta.*/
 export const mdLinks = (pathArg, options) => {
@@ -31,20 +31,3 @@ export const mdLinks = (pathArg, options) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Si hay un error al leer la ruta, se rechaza la promesa con un error.
-      // if (err) {
-      //   return reject(new Error(`La ruta ${absolutePath} no existe`));
-      // }
