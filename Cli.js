@@ -17,7 +17,7 @@ const messageValYStats =" Te mostrará estadísticas de enlaces totales, únicos
 const statsHeaderText = chalk.bgHex("#FFD700").hex("#010101").bold(" Stats:  ") + "\n";
 const statsValidateHeaderText  = chalk.bgHex("#FFD700").hex("#010101").bold(" Stats && Validate : ") + "\n";
 const successHeaderText = chalk.hex("#A7E9AF").bold("Links encontrados ") + "\u2193" + "\n";
-const separatorLine  = chalk.hex("#A7E9AF").bold("⋆ ").repeat(55)+"\n";
+const separatorLine  = chalk.hex("#A7E9AF").bold("⋆ ").repeat(58)+"\n";
 
 figlet.text(
   text,
