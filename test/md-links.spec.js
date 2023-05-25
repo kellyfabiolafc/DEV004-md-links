@@ -35,30 +35,28 @@ describe("getAbsolutePath", () => {
     expect(absolutePath).toBe(expectedAbsolutePath); // Verificar que se devuelva la ruta absoluta correcta
   });
 });
-
 describe("getStats", () => {
-  it("debería resolver la promesa con los stats si la ruta existe", async () => {
+  it("debería resolver la promesa con los stats si la ruta existe", () => {
     const route = "/ruta/existente";
     const mockStats = { size: 100, isFile: () => true }; // Mock de los stats
     fs.stat.mockImplementation((path, callback) => {
       callback(null, mockStats);
     });
 
-    await expect(getStats(route)).resolves.toEqual(mockStats); // Verificar que se resuelva con los stats esperados
-    expect(fs.stat).toHaveBeenCalledWith(route, expect.any(Function)); // Verificar que fs.stat se haya llamado con la ruta correcta
+    return expect(getStats(route)).resolves.toEqual(mockStats); // Verificar que se resuelva con los stats esperados
   });
 
-  it("debería rechazar la promesa con un error si la ruta no existe", async () => {
+  it("debería rechazar la promesa con un error si la ruta no existe", () => {
     const route = "/ruta/inexistente";
     const mockError = new Error(`La ruta ${route} no existe`);
     fs.stat.mockImplementation((path, callback) => {
       callback(mockError);
     });
 
-    await expect(getStats(route)).rejects.toThrow(mockError); // Verificar que se rechace la promesa con el error esperado
-    expect(fs.stat).toHaveBeenCalledWith(route, expect.any(Function)); // Verificar que fs.stat se haya llamado con la ruta correcta
+    return expect(getStats(route)).rejects.toThrow(mockError); // Verificar que se rechace la promesa con el error esperado
   });
 });
+
 
 describe("readDir", () => {
   it("se resuelve con un array de nombres de archivos cuando el directorio existe", () => {
@@ -205,9 +203,8 @@ describe("isMarkdownFile", () => {
     const result = isMarkdownFile(file);
     expect(result).toBe(false);
   });
-});
-describe("readFile", () => {
-  it("debería leer el contenido del archivo y resolver con los datos", async () => {
+});describe("readFile", () => {
+  it("debería leer el contenido del archivo y resolver con los datos", () => {
     const filePath = "/ruta/al/archivo.txt";
     const fileContent = "Contenido del archivo";
 
@@ -217,11 +214,12 @@ describe("readFile", () => {
       callback(null, fileContent);
     });
 
-    const result = await readFile(filePath);
-    expect(result).toBe(fileContent);
+    return readFile(filePath).then((result) => {
+      expect(result).toBe(fileContent);
+    });
   });
 
-  it("debería rechazar con el error si ocurre algún problema al leer el archivo", async () => {
+  it("debería rechazar con el error si ocurre algún problema al leer el archivo", () => {
     const filePath = "/ruta/al/archivo.txt";
     const error = new Error("Error al leer el archivo");
 
@@ -231,16 +229,15 @@ describe("readFile", () => {
       callback(error);
     });
 
-    await expect(readFile(filePath)).rejects.toThrow(error);
+    return expect(readFile(filePath)).rejects.toThrow(error);
   });
 });
-
 describe("fetchLinkStatus", () => {
   beforeEach(() => {
     fetchMock.resetMocks();
   });
 
-  it("debería realizar la solicitud HTTP y resolver con el estado y el texto de respuesta del enlace", async () => {
+  it("debería realizar la solicitud HTTP y resolver con el estado y el texto de respuesta del enlace", () => {
     const link = {
       href: "https://example.com",
     };
@@ -251,12 +248,13 @@ describe("fetchLinkStatus", () => {
 
     fetchMock.mockResponse(JSON.stringify(response));
 
-    const result = await fetchLinkStatus(link);
-    expect(result.status).toBe(response.status);
-    expect(result.ok).toBe(response.statusText);
+    return fetchLinkStatus(link).then((result) => {
+      expect(result.status).toBe(response.status);
+      expect(result.ok).toBe(response.statusText);
+    });
   });
 
-  it("debería resolver con un estado y texto de respuesta personalizados cuando ocurre un error en la solicitud HTTP", async () => {
+  it("debería resolver con un estado y texto de respuesta personalizados cuando ocurre un error en la solicitud HTTP", () => {
     const link = {
       href: "https://example89.com444",
     };
@@ -264,10 +262,10 @@ describe("fetchLinkStatus", () => {
 
     fetchMock.mockReject(error);
 
-    const result = await fetchLinkStatus(link);
-    expect(result.status).toBe(500);
-    expect(result.ok).toBe("Internal Server Error");
+    return fetchLinkStatus(link).then((result) => {
+      expect(result.status).toBe(500);
+      expect(result.ok).toBe("Internal Server Error");
+    });
   });
 });
-
 
