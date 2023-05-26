@@ -26,12 +26,10 @@
     "whatwg-fetch": "^3.6.2"
   },
   "scripts": {
-    "start": "node ./api.js",
-    "index": "node ./index.js",
     "test": "jest --coverage"
   },
   "bin": {
-    "md-links": "./cli.js"
+    "md-links": "./src/cli.js"
   },
   "devDependencies": {
     "jest-fetch-mock": "^3.0.3"

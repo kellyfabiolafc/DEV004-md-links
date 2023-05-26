@@ -1,5 +1,4 @@
 
-import { mdLinks } from "../md-Links.js";
 import {
   getAbsolutePath,
   getStats,
@@ -11,7 +10,7 @@ import {
   isMarkdownFile,
   getLinkStats,
   extractLinksFromFile,
-} from "../api-mdlinks.js";
+} from "../src/api.md.js";
 import pathModule from "path";
 import fs from "fs";
 import fetchMock from "jest-fetch-mock";
