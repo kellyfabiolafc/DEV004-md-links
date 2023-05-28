@@ -4,7 +4,6 @@ import { argv } from "node:process";
 import chalk from "chalk";
 import ora from "ora";
 import figlet from "figlet";
-
 const path = process.argv[2];
 const validate = process.argv.includes("--validate");
 const stats = process.argv.includes("--stats");

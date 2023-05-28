@@ -22,6 +22,8 @@ export const getStats = (routeAbsolute) => {
 };
 
 
+
+
 export const readDir = (dirPath) => {
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {

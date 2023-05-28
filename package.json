@@ -2,6 +2,7 @@
   "name": "md-links",
   "type": "module",
   "version": "0.1.0",
+  "description": "command line tool (CLI) that through Node.js reads and analyzes files in Markdown format, to verify the links they contain and report some statistics",
   "engines": {
     "node": ">=16.x"
   },
@@ -10,6 +11,19 @@
     "version": "5.6.0",
     "commit": "ffa75c8b2bede153844195479abeff01f3e34227"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kellyfabiolafc/DEV004-md-links"
+  },
+  "keywords": [
+    "md-links",
+    "markdown",
+    "links",
+    "validation",
+    "parsing"
+  ],
+  "author": "kellyfabiolafc",
+  "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.21.8",
     "@babel/plugin-transform-modules-commonjs": "^7.21.5",
@@ -17,7 +31,6 @@
     "babel": "^6.23.0",
     "babel-jest": "^29.5.0",
     "chalk": "^4.1.2",
-    "chalk-animation": "^2.0.3",
     "figlet": "^1.6.0",
     "jest": "^29.5.0",
     "markdown-it": "^13.0.1",
@@ -35,4 +48,3 @@
     "jest-fetch-mock": "^3.0.3"
   }
 }
-
