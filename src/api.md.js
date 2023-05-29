@@ -8,7 +8,7 @@ export const getAbsolutePath = (pathArg) => {
   return pathModule.isAbsolute(pathArg) ? pathArg : pathModule.resolve(pathArg);
 };
 
-//funcion que deberia resolver la promesa con los stats
+//funcion que obtiene las estadísticas de un archivo o directorio especificado por la ruta absoluta. 
 export const getStats = (routeAbsolute) => {
   return new Promise((resolve, reject) => {
     fs.stat(routeAbsolute, (err, stats) => {
@@ -21,21 +21,18 @@ export const getStats = (routeAbsolute) => {
   });
 };
 
-
-
-
-export const readDir = (dirPath) => {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirPath, (err, files) => {
-      if (err) {
-        // Si hay un error al leer el directorio, se rechaza la promesa con un error.
-        reject(err);
-      }
-      resolve(files);
-    });
-  });
+//Funcion para comprobar si la ruta es un archivo
+export const isFile = (stats) => {
+  return stats.isFile();
 };
 
+
+//Función para verificar si el archivo es de extension md
+export const isMarkdownFile = (file) => {
+  return pathModule.extname(file) === ".md";
+};
+
+//La función readFile lee un archivo en formato UTF-8 y devuelve su contenido como una promesa.
 export const readFile = (filePath) => {
   //retronar una promesa
   return new Promise((resolve, reject) => {
@@ -43,11 +40,29 @@ export const readFile = (filePath) => {
       if (err) {
         reject(err);
       }
-      //resolve
       resolve(data);
     });
   });
 };
+
+//La función findLinks encuentra y devuelve una lista de enlaces en un contenido dado.
+export const findLinks = (content, filePath) => {
+  const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
+  const links = [];
+  
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    const link = {
+      href: match[2],
+      text: match[1],
+      file: filePath,
+    };
+    links.push(link);
+  }
+  
+  return links;
+};
+
 
 /*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
 export const extractLinksFromFile = (filePath, options) => {
@@ -89,24 +104,7 @@ export const extractLinksFromFile = (filePath, options) => {
 };
 
 
-export const findLinks = (content, filePath) => {
-  const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
-  const links = [];
-  
-  let match;
-  while ((match = regex.exec(content)) !== null) {
-    const link = {
-      href: match[2],
-      text: match[1],
-      file: filePath,
-    };
-    links.push(link);
-  }
-  
-  return links;
-};
-
-
+//función se utiliza para realizar solicitudes HTTP a enlaces y obtener su estado y estado de texto. 
 export const fetchLinkStatus = (link) => {
   return new Promise((resolve) => {
     fetch(link.href)
@@ -123,6 +121,7 @@ export const fetchLinkStatus = (link) => {
   });
 };
 
+// calcula estadísticas sobre los enlaces, incluyendo el total de enlaces, enlaces únicos y enlaces rotos (si se realiza la validación).
 export const getLinkStats = (links, options) => {
   const stats = {
     Total: links.length,
@@ -136,12 +135,13 @@ export const getLinkStats = (links, options) => {
   return stats;
 };
 
+
+//funcion para extraer links de un directorio en caso se encuentren archivos
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
     readDir(dirPath).then((files) => {
       const promises = files.map((file) => {
         const filePath = pathModule.join(dirPath, file);
-
         return new Promise((resolve) => {
           getStats(filePath).then((stats) => {
             if (isDirectory(stats)) {
@@ -174,24 +174,25 @@ export const extractLinksFromDirectory = (dirPath, options) => {
 });
 };
 
-
-
-
-
-export const isMarkdownFile = (file) => {
-  return pathModule.extname(file) === ".md";
+export const readDir = (dirPath) => {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dirPath, (err, files) => {
+      if (err) {
+        // Si hay un error al leer el directorio, se rechaza la promesa con un error.
+        reject(err);
+      }
+      resolve(files);
+    });
+  });
 };
 
 
-
+//Funcion para comprobar si la ruta es un directorio
 export const isDirectory = (stats) => {
   return stats.isDirectory();
 };
 
-export const isFile = (stats) => {
-  return stats.isFile();
-};
-
+//función para verificar si hay enlaces válidos en una lista y manejar adecuadamente el caso en el que no se encuentren enlaces
 export const checkMdFilesWithLinks = (links) => {
   const noMdFiles = links.every((link) => link instanceof Error);
   if (noMdFiles) {
