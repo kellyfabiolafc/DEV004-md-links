@@ -19,10 +19,27 @@ Md-links es una herramienta de línea de comandos (CLI) que analiza archivos en 
 ## 2. Instalación
 
 Mediante npm, colocando en la terminal:
-
-fabiola-md.links
+npm i fabiola-md.links
 
 ## 4. Uso 
+
+<p align="center" width="100%"> <img width="100%" src="img/md-links.png"></p><br>
+
+<p align="center" width="100%"> <img width="100%" src="img/--help.png"></p><br>
+
+<p align="center" width="100%"> <img width="100%" src="img/--validate.png"></p><br>
+
+<p align="center" width="100%"> <img width="100%" src="img/--stats.png"></p><br>
+
+<p align="center" width="100%"> <img width="100%" src="img/--stats y --validate.png"></p><br>
+
+## 5. Planificación
+<p align="center" width="100%"> <img width="100%" src="img/tarea1.png"></p>
+<p align="center" width="100%"> <img width="100%" src="img/tarea2.png"></p>
+
+## 6. Pruebas unitarias
+
+<p align="center" width="100%"> <img width="100%" src="img/test.png"></p><br>
 
 ## 3. Objetivos de aprendizaje
 
