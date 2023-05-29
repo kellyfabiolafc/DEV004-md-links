@@ -9,7 +9,8 @@ import {
   isDirectory,
   isMarkdownFile,
   getLinkStats,
-  extractLinksFromFile,
+  isFile,
+  checkMdFilesWithLinks,
 } from "../src/api.md.js";
 import pathModule from "path";
 import fs from "fs";
@@ -267,4 +268,39 @@ describe("fetchLinkStatus", () => {
     });
   });
 });
+describe('isFile', () => {
+  test('debería devolver true para un objeto de estadísticas de archivo', () => {
+    const statsArchivo = { isFile: () => true };
+    expect(isFile(statsArchivo)).toBe(true);
+  });
 
+  test('debería devolver false para un objeto de estadísticas de directorio', () => {
+    const statsDirectorio = { isFile: () => false };
+    expect(isFile(statsDirectorio)).toBe(false);
+  });
+});
+
+
+describe('checkMdFilesWithLinks', () => {
+  it('debería devolver los enlaces si existen archivos Markdown con enlaces', () => {
+    const enlaces = [
+      { href: 'https://example.com', text: 'Enlace de ejemplo', file: 'archivo1.md' },
+      { href: 'https://google.com', text: 'Google', file: 'archivo2.md' }
+    ];
+
+    const resultado = checkMdFilesWithLinks(enlaces);
+
+    expect(resultado).toEqual(enlaces);
+  });
+
+  it('debería lanzar un error si no hay archivos Markdown con enlaces', () => {
+    const enlaces = [
+      new Error("No se encontraron enlaces en el archivo"),
+      new Error("No se encontraron enlaces en el archivo")
+    ];
+
+    expect(() => {
+      checkMdFilesWithLinks(enlaces);
+    }).toThrowError('No se encontraron archivos Markdown con enlaces en el directorio');
+  });
+});

@@ -52,9 +52,18 @@ export const readFile = (filePath) => {
 /*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
 export const extractLinksFromFile = (filePath, options) => {
   return new Promise((resolve, reject) => {
+    if (!isMarkdownFile(filePath)) {
+      reject(new Error("La ruta no es un archivo Markdown (.md)"));
+      return;
+    }
     readFile(filePath)
       .then((content) => {
       const links = findLinks(content, filePath)
+   
+      if (links.length === 0) {
+        reject(new Error("No se encontraron enlaces en el archivo"));
+        return;
+      }
         if (options && options.validate) {
           const promises = links.map((link) => fetchLinkStatus(link));
 
@@ -129,42 +138,45 @@ export const getLinkStats = (links, options) => {
 
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
-    readDir(dirPath)
-      .then((files) => {
-        const promises = files.map((file) => {
-          const filePath = pathModule.join(dirPath, file);
+    readDir(dirPath).then((files) => {
+      const promises = files.map((file) => {
+        const filePath = pathModule.join(dirPath, file);
 
-          return getStats(filePath)
-            .then((stats) => {
-              if (isDirectory(stats)) {
-                return extractLinksFromDirectory(filePath, options)
-                  .then((links) => links)
-                  .catch(() => []);
-              } else if (isMarkdownFile(file)) {
-                return extractLinksFromFile(filePath, options)
-                  .then((links) => links)
-                  .catch(() => {
-                    throw new Error(`La ruta ${filePath} no es md`);
-                  });
-              } else {
-                return [];
-              }
-            })
-            .catch((err) => {
-              throw err;
-            });
+        return new Promise((resolve) => {
+          getStats(filePath).then((stats) => {
+            if (isDirectory(stats)) {
+              // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
+              extractLinksFromDirectory(filePath, options)
+                .then((links) => resolve(links))
+                .catch(() => resolve([]));
+            } else if (isFile(stats)) {
+              // Si el archivo es un archivo Markdown, llamamos a extractLinksFromFile
+              extractLinksFromFile(filePath, options)
+                .then((links) => resolve(links))
+                .catch((err) => resolve(err));
+            } 
+          });
         });
-
-        Promise.all(promises)
-          .then((results) => {
-            const links = results.flat();
-            resolve(links);
-          })
-          .catch((err) => reject(err));
+      });
+      Promise.all(promises)
+      .then((results) => {
+        const links = results.flat();
+        try {
+          const validatedLinks = checkMdFilesWithLinks(links);
+          resolve(validatedLinks);
+        } catch (error) {
+          reject(error);
+        }
       })
       .catch((err) => reject(err));
-  });
+  })
+  .catch((err) => reject(err));
+});
 };
+
+
+
+
 
 export const isMarkdownFile = (file) => {
   return pathModule.extname(file) === ".md";
@@ -174,4 +186,16 @@ export const isMarkdownFile = (file) => {
 
 export const isDirectory = (stats) => {
   return stats.isDirectory();
+};
+
+export const isFile = (stats) => {
+  return stats.isFile();
+};
+
+export const checkMdFilesWithLinks = (links) => {
+  const noMdFiles = links.every((link) => link instanceof Error);
+  if (noMdFiles) {
+    throw new Error("No se encontraron archivos Markdown con enlaces en el directorio");
+  }
+  return links;
 };
