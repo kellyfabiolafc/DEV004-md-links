@@ -24,11 +24,11 @@ Antes de comenzar a utilizar Md-links, necesitarás instalarlo en tu entorno de 
 Abre tu terminal o línea de comandos.
 Ejecuta el siguiente comando para instalar Md-links:
 
-```npm install kellyfabiolafc/DEV004-md-links```
+``` bash npm install kellyfabiolafc/DEV004-md-links```
 
 o
 
-```npm i fabiola-md.links```
+``` bash npm i fabiola-md.links```
 
 Una vez finalizada la instalación, estarás listo para utilizar Md-links y aprovechar todas sus funcionalidades para analizar y verificar los enlaces en tus archivos Markdown. ¡Comencemos!
 
