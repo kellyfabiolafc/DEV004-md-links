@@ -13,8 +13,9 @@
 * [8. Archivos del proyecto ](#8-archivos-del-proyecto)
 * [9. Este proyecto consta en dos partes ](#9-este-proyecto-consta-de-dos-partes)
 * [10. Checklist](#10-checklist)
-
-
+* [11. Contribuciones](#11-contribuciones)
+* [12. Créditos](#12-créditos)
+* [13. Licencia](#13-licencia)
 ## 1. Descripción 
 
 Md-links, tu aliado para el control de enlaces en archivos Markdown. Esta potente herramienta de línea de comandos (CLI) se encarga de analizar tus archivos Markdown en busca de enlaces, verificando su validez y brindándote datos relevantes. Con Md-links, puedes asegurarte de que todos tus enlaces estén activos y funcionales, evitando enlaces rotos y mejorando la calidad de tus documentos. Simplifica la gestión de enlaces Markdown y obtén estadísticas útiles para mantener tus proyectos siempre actualizados y profesionales.
@@ -38,18 +39,35 @@ Una vez finalizada la instalación, estarás listo para utilizar Md-links y apro
 
 ## 3. Uso 
 El comportamiento por defecto no debe validar si las URLs responden ok o no, solo debe identificar el archivo markdown (a partir de la ruta que recibe como argumento), analizar el archivo Markdown e imprimir los links que vaya encontrando, junto con la ruta del archivo donde aparece y el texto que hay dentro del link (truncado a 50 caracteres).
+```bash 
+md-links archivoPruebaa
+```
 <p align="center" width="100%"> <img width="100%" src="img/md-links.png"></p><br>
 
 El mensaje de ayuda describe las instrucciones de uso de md-links y proporciona información sobre cómo ejecutarlo correctamente. Utiliza la librería chalk para imprimir texto en colores y estilos diferentes para resaltar la información clave.
+```bash 
+md-links --help
+```
+
 <p align="center" width="100%"> <img width="100%" src="img/--help.png"></p><br>
 
 Si pasamos la opción `--validate`, el módulo debe hacer una petición HTTP para averiguar si el link funciona o no. Si el link resulta en una redirección a una URL que responde ok, entonces consideraremos el link como ok.
+```bash 
+md-links archivoPruebaa --validate
+```
+
 <p align="center" width="100%"> <img width="100%" src="img/--validate.png"></p><br>
 
 Si pasamos la opción `--stats` el output (salida) será un texto con estadísticas básicas sobre los links.
+```bash 
+md-links archivoPruebaa --stats
+```
 <p align="center" width="100%"> <img width="100%" src="img/--stats.png"></p><br>
 
 También podemos combinar `--stats` y `--validate` para obtener estadísticas que necesiten de los resultados de la validación.
+```bash 
+md-links archivoPruebaa --stats --validate
+```
 <p align="center" width="100%"> <img width="100%" src="img/--stats y --validate.png"></p><br>
 
 ## 4. Planificación
@@ -417,3 +435,18 @@ Broken: 1
   lines, y branches.
 * [✔] Pasa tests (y linters) (`npm test`).
 
+## 11. Contribuciones
+Si deseas contribuir a md-links, sigue estos pasos:
+
+Haz un fork de este repositorio.
+Crea una rama con tu nueva funcionalidad: git checkout -b nueva-funcionalidad.
+Realiza tus modificaciones y realiza commit de tus cambios: git commit -m "Añadir nueva funcionalidad".
+Envía tus cambios al repositorio remoto: git push origin nueva-funcionalidad.
+Abre una pull request en este repositorio.
+## 12. Créditos
+md-links ha sido desarrollado por [Fabiola Flores](https://github.com/kellyfabiolafc)
+
+## 13. Licencia
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para obtener más detalles.
+
+¡Gracias por usar md-links
