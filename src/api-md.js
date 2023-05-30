@@ -2,7 +2,7 @@
 import fs from "fs";
 import pathModule from "path";
 import 'whatwg-fetch';
-
+import { extractLinksFromFile } from "./api-file.js";
 //funcion que debería devolver una ruta absoluta
 export const getAbsolutePath = (pathArg) => {
   return pathModule.isAbsolute(pathArg) ? pathArg : pathModule.resolve(pathArg);
@@ -64,44 +64,6 @@ export const findLinks = (content, filePath) => {
 };
 
 
-/*La función se encarga de leer el contenido de un archivo en el sistema de archivos y extraer los enlaces que encuentre en él.*/
-export const extractLinksFromFile = (filePath, options) => {
-  return new Promise((resolve, reject) => {
-    if (!isMarkdownFile(filePath)) {
-      reject(new Error("La ruta no es un archivo Markdown (.md)"));
-      return;
-    }
-    readFile(filePath)
-      .then((content) => {
-      const links = findLinks(content, filePath)
-   
-      if (links.length === 0) {
-        reject(new Error("No se encontraron enlaces en el archivo"));
-        return;
-      }
-        if (options && options.validate) {
-          const promises = links.map((link) => fetchLinkStatus(link));
-
-          Promise.all(promises)
-            .then((validatedLinks) => {
-              if (options && options.stats) {
-                const stats = getLinkStats(validatedLinks, options);
-                resolve(stats);
-              } else {
-                resolve(validatedLinks);
-              }
-            })
-            .catch((err) => reject(err));
-        } else if (options && options.stats) {
-          const stats = getLinkStats(links, options);
-          resolve(stats);
-        } else {
-          resolve(links);
-        }
-      })
-      .catch((err) => reject(err));
-  });
-};
 
 
 //función se utiliza para realizar solicitudes HTTP a enlaces y obtener su estado y estado de texto. 
