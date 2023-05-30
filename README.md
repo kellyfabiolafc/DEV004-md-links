@@ -32,7 +32,7 @@ npm install kellyfabiolafc/DEV004-md-links
 o
 
 ```bash 
-npm i fabiola-md.links
+npm i fabiolafc-md.links
 ```
 
 Una vez finalizada la instalación, estarás listo para utilizar Md-links y aprovechar todas sus funcionalidades para analizar y verificar los enlaces en tus archivos Markdown. ¡Comencemos!
