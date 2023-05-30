@@ -11,7 +11,7 @@ import {
   getLinkStats,
   isFile,
   checkMdFilesWithLinks,
-} from "../src/api.md.js";
+} from "../src/api-md.js";
 import pathModule from "path";
 import fs from "fs";
 import fetchMock from "jest-fetch-mock";

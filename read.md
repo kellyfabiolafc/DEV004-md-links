@@ -2,7 +2,8 @@
 
 ## Índice
 
-* [1. Resumen del proyecto](#1-descripción)
+* [1. Preámbulo](#1-preámbulo)
+* [2. Resumen del proyecto](#2-resumen-del-proyecto)
 * [3. Objetivos de aprendizaje](#3-objetivos-de-aprendizaje)
 * [4. Consideraciones generales](#4-consideraciones-generales)
 * [5. Criterios de aceptación mínimos del proyecto](#5-criterios-de-aceptación-mínimos-del-proyecto)
@@ -12,34 +13,50 @@
 * [9. Checklist](#9-checklist)
 * [10. Achicando el problema](#10-achicando-el-problema)
 
+***
 
-## 1. Descripción 
+## 1. Preámbulo
 
-Md-links es una herramienta de línea de comandos (CLI) que analiza archivos en formato Markdown y verifica los enlaces que contienen, proporcionando información y estadísticas útiles.
-## 2. Instalación
+[Markdown](https://es.wikipedia.org/wiki/Markdown) es un lenguaje de marcado
+ligero muy popular entre developers. Es usado en muchísimas plataformas que
+manejan texto plano (GitHub, foros, blogs, ...) y es muy común
+encontrar varios archivos en ese formato en cualquier tipo de repositorio
+(empezando por el tradicional `README.md`).
 
-Mediante npm, colocando en la terminal:
-npm i fabiola-md.links
+Estos archivos `Markdown` normalmente contienen _links_ (vínculos/ligas) que
+muchas veces están rotos o ya no son válidos y eso perjudica mucho el valor de
+la información que se quiere compartir. 
 
-## 4. Uso 
+Dentro de una comunidad de código abierto, nos han propuesto crear una
+herramienta usando [Node.js](https://nodejs.org/), que lea y analice archivos
+en formato `Markdown`, para verificar los links que contengan y reportar
+algunas estadísticas. Por ejemplo en Laboratoria podrían usar esta 
+herramienta para detectar los links rotos en los readmes de los proyectos
+o en un área de facturación verificar los links rotos de una factura dígital.
 
-<p align="center" width="100%"> <img width="100%" src="img/md-links.png"></p><br>
+![md-links](https://user-images.githubusercontent.com/110297/42118443-b7a5f1f0-7bc8-11e8-96ad-9cc5593715a6.jpg)
 
-<p align="center" width="100%"> <img width="100%" src="img/--help.png"></p><br>
+## 2. Resumen del proyecto
 
-<p align="center" width="100%"> <img width="100%" src="img/--validate.png"></p><br>
+En este proyecto crearás una herramienta de línea de comando (CLI) así como tu
+propia librería (o biblioteca - library) en JavaScript.
 
-<p align="center" width="100%"> <img width="100%" src="img/--stats.png"></p><br>
+En esta oportunidad **nos alejamos del navegador** para construir un
+programa que se ejecutará en la terminal usando Node.js. La forma en la que interactuaras con esta aplicación es mediante comandos 
+que tu diseñaras/programaras por la terminal/shell. Aprenderemos sobre procesos
+(`process.env`, `process.argv`, ...), cómo interactuar con el sistema archivos,
+cómo hacer consultas/peticiones HTTP, etc.
 
-<p align="center" width="100%"> <img width="100%" src="img/--stats y --validate.png"></p><br>
+[Node.js](https://nodejs.org/es/) es un entorno de ejecución para JavaScript
+construido con el [motor de JavaScript V8 de Chrome](https://developers.google.com/v8/).
+Esto nos va a permitir ejecutar JavaScript en el entorno del sistema operativo,
+ya sea tu máquina o un servidor, lo cual nos abre las puertas para poder
+interactuar con el sistema en sí, archivos, redes, ...
 
-## 5. Planificación
-<p align="center" width="100%"> <img width="100%" src="img/tarea1.png"></p>
-<p align="center" width="100%"> <img width="100%" src="img/tarea2.png"></p>
-
-## 6. Pruebas unitarias
-
-<p align="center" width="100%"> <img width="100%" src="img/test.png"></p><br>
+Diseñar tu propia librería es una experiencia fundamental para cualquier
+desarrollador porque que te obliga a pensar en la interfaz (API) de tus
+_módulos_ y cómo será usado por otros developers. Debes tener especial
+consideración en peculiaridades del lenguaje, convenciones y buenas prácticas.
 
 ## 3. Objetivos de aprendizaje
 
@@ -47,9 +64,9 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
 
 ### JavaScript
 
-- [✔] **Diferenciar entre tipos de datos primitivos y no primitivos**
+- [ ] **Diferenciar entre tipos de datos primitivos y no primitivos**
 
-- [✔] **Arrays (arreglos)**
+- [ ] **Arrays (arreglos)**
 
   <details><summary>Links</summary><p>
 
@@ -62,14 +79,14 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [Array.prototype.reduce() - MDN](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/Reduce)
 </p></details>
 
-- [✔] **Objetos (key, value)**
+- [ ] **Objetos (key, value)**
 
   <details><summary>Links</summary><p>
 
   * [Objetos en JavaScript](https://curriculum.laboratoria.la/es/topics/javascript/05-objects/01-objects)
 </p></details>
 
-- [✔] **Uso de condicionales (if-else, switch, operador ternario, lógica booleana)**
+- [ ] **Uso de condicionales (if-else, switch, operador ternario, lógica booleana)**
 
   <details><summary>Links</summary><p>
 
@@ -77,7 +94,7 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [Tomando decisiones en tu código — condicionales - MDN](https://developer.mozilla.org/es/docs/Learn/JavaScript/Building_blocks/conditionals)
 </p></details>
 
-- [✔] **Funciones (params, args, return)**
+- [ ] **Funciones (params, args, return)**
 
   <details><summary>Links</summary><p>
 
@@ -87,7 +104,7 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [Funciones — bloques de código reutilizables - MDN](https://developer.mozilla.org/es/docs/Learn/JavaScript/Building_blocks/Functions)
 </p></details>
 
-- [✔] **Recursión o recursividad**
+- [ ] **Recursión o recursividad**
 
   <details><summary>Links</summary><p>
 
@@ -95,23 +112,23 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [Recursión o Recursividad - Laboratoria Developers en Medium](https://medium.com/laboratoria-developers/recursi%C3%B3n-o-recursividad-ec8f1a359727)
 </p></details>
 
-- [✔] **Módulos de CommonJS**
+- [ ] **Módulos de CommonJS**
 
   <details><summary>Links</summary><p>
 
   * [Modules: CommonJS modules - Node.js Docs](https://nodejs.org/docs/latest/api/modules.html)
 </p></details>
 
-- [✔] **Diferenciar entre expresiones (expressions) y sentencias (statements)**
+- [ ] **Diferenciar entre expresiones (expressions) y sentencias (statements)**
 
-- [✔] **Callbacks**
+- [ ] **Callbacks**
 
   <details><summary>Links</summary><p>
 
   * [Función Callback - MDN](https://developer.mozilla.org/es/docs/Glossary/Callback_function)
 </p></details>
 
-- [✔] **Promesas**
+- [ ] **Promesas**
 
   <details><summary>Links</summary><p>
 
@@ -119,64 +136,64 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [How to Write a JavaScript Promise - freecodecamp (en inglés)](https://www.freecodecamp.org/news/how-to-write-a-javascript-promise-4ed8d44292b8/)
 </p></details>
 
-- [✔] **Pruebas unitarias (unit tests)**
+- [ ] **Pruebas unitarias (unit tests)**
 
   <details><summary>Links</summary><p>
 
   * [Empezando con Jest - Documentación oficial](https://jestjs.io/docs/es-ES/getting-started)
 </p></details>
 
-- [✔] **Pruebas asíncronas**
+- [ ] **Pruebas asíncronas**
 
   <details><summary>Links</summary><p>
 
   * [Tests de código asincrónico con Jest - Documentación oficial](https://jestjs.io/docs/es-ES/asynchronous)
 </p></details>
 
-- [✔] **Uso de mocks y espías**
+- [ ] **Uso de mocks y espías**
 
   <details><summary>Links</summary><p>
 
   * [Manual Mocks con Jest - Documentación oficial](https://jestjs.io/docs/es-ES/manual-mocks)
 </p></details>
 
-- [✔] **Pruebas de compatibilidad en múltiples entornos de ejecución**
+- [ ] **Pruebas de compatibilidad en múltiples entornos de ejecución**
 
-- [✔] **Uso de linter (ESLINT)**
+- [ ] **Uso de linter (ESLINT)**
 
-- [✔] **Uso de identificadores descriptivos (Nomenclatura y Semántica)**
+- [ ] **Uso de identificadores descriptivos (Nomenclatura y Semántica)**
 
 ### Node.js
 
-- [✔] **Instalar y usar módulos con npm**
+- [ ] **Instalar y usar módulos con npm**
 
   <details><summary>Links</summary><p>
 
   * [Sitio oficial de npm (en inglés)](https://www.npmjs.com/)
 </p></details>
 
-- [✔] **Configuración de package.json**
+- [ ] **Configuración de package.json**
 
   <details><summary>Links</summary><p>
 
   * [package.json - Documentación oficial (en inglés)](https://docs.npmjs.com/files/package.json)
 </p></details>
 
-- [✔] **Configuración de npm-scripts**
+- [ ] **Configuración de npm-scripts**
 
   <details><summary>Links</summary><p>
 
   * [scripts - Documentación oficial (en inglés)](https://docs.npmjs.com/misc/scripts)
 </p></details>
 
-- [✔] **process (env, argv, stdin-stdout-stderr, exit-code)**
+- [ ] **process (env, argv, stdin-stdout-stderr, exit-code)**
 
   <details><summary>Links</summary><p>
 
   * [Process - Documentación oficial (en inglés)](https://nodejs.org/api/process.html)
 </p></details>
 
-- [✔] **File system (fs, path)**
+- [ ] **File system (fs, path)**
 
   <details><summary>Links</summary><p>
 
@@ -186,21 +203,21 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
 
 ### Control de Versiones (Git y GitHub)
 
-- [✔] **Git: Instalación y configuración**
+- [ ] **Git: Instalación y configuración**
 
-- [✔] **Git: Control de versiones con git (init, clone, add, commit, status, push, pull, remote)**
+- [ ] **Git: Control de versiones con git (init, clone, add, commit, status, push, pull, remote)**
 
-- [✔] **Git: Integración de cambios entre ramas (branch, checkout, fetch, merge, reset, rebase, tag)**
+- [ ] **Git: Integración de cambios entre ramas (branch, checkout, fetch, merge, reset, rebase, tag)**
 
-- [✔] **GitHub: Creación de cuenta y repos, configuración de llaves SSH**
+- [ ] **GitHub: Creación de cuenta y repos, configuración de llaves SSH**
 
-- [✔] **GitHub: Colaboración en Github (branches | forks | pull requests | code review | tags)**
+- [ ] **GitHub: Colaboración en Github (branches | forks | pull requests | code review | tags)**
 
-- [✔] **GitHub: Organización en Github (projects | issues | labels | milestones | releases)**
+- [ ] **GitHub: Organización en Github (projects | issues | labels | milestones | releases)**
 
 ### HTTP
 
-- [✔] **Consulta o petición (request) y respuesta (response).**
+- [ ] **Consulta o petición (request) y respuesta (response).**
 
   <details><summary>Links</summary><p>
 
@@ -208,8 +225,7 @@ Reflexiona y luego marca los objetivos que has llegado a entender y aplicar en t
   * [Mensajes HTTP - MDN](https://developer.mozilla.org/es/docs/Web/HTTP/Messages)
 </p></details>
 
-- [✔
-] **Códigos de status de HTTP**
+- [ ] **Códigos de status de HTTP**
 
   <details><summary>Links</summary><p>
 

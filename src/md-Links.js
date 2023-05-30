@@ -3,7 +3,7 @@ import {
   extractLinksFromFile,
   extractLinksFromDirectory,
   getAbsolutePath,getStats
-} from "./api.md.js";
+} from "./api-md.js";
 /* Esta función recibe una ruta y opciones, y retorna una promesa que resuelve a un array de objetos con información de los links 
 encontrados en la ruta.*/
 export const mdLinks = (pathArg, options) => {
