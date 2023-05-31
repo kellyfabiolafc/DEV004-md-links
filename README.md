@@ -42,7 +42,7 @@ El comportamiento por defecto no debe validar si las URLs responden ok o no, sol
 ```bash 
 md-links archivoPruebaa
 ```
-<p align="center" width="100%"> <img width="100%" src="img/md-links.png"></p><br>
+<p align="center" width="100%"> <img width="100%" src="md-links.path.png"></p><br>
 
 El mensaje de ayuda describe las instrucciones de uso de md-links y proporciona información sobre cómo ejecutarlo correctamente. Utiliza la librería chalk para imprimir texto en colores y estilos diferentes para resaltar la información clave.
 ```bash 
