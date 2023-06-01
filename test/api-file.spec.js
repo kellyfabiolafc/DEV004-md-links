@@ -50,15 +50,5 @@ describe('extractLinksFromFile', () => {
       'La ruta no es un archivo Markdown (.md)'
     );
   });
-  // test('rechaza si no se encuentran enlaces en la ruta', () => {
-  //   const path = '/ruta/al/archivo.md';
-  //   const options = { validate: true, stats: true };
-
-  //   // Simula que no se encuentran enlaces en el contenido
-  //   apiMd.findLinks.mockReturnValue([]);
-
-  //   return expect(extractLinksFromFile(path, options)).rejects.toThrow('La ruta no contiene enlaces');
-  // });
 
 });
-

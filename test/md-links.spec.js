@@ -19,8 +19,8 @@ import {
     getAbsolutePath: jest.fn(),
     getStats: jest.fn(),
   }));
-  
   describe('mdLinks', () => {
+    //// Limpia todos los mocks después de cada prueba
     afterEach(() => {
       jest.clearAllMocks();
     });
@@ -32,15 +32,16 @@ import {
       const stats = { isFile: () => true };
       const links = [{ url: 'https://example.com', text: 'Ejemplo' }];
   
+      // Simula el comportamiento de las funciones llamadas en la prueba
       getAbsolutePath.mockReturnValue('/ruta/al/archivo.md');
       getStats.mockResolvedValue(stats);
       extractLinksFromFile.mockResolvedValue(links);
   
       return mdLinks(path, options).then((result) => {
         expect(result).toEqual(links);
-        expect(getAbsolutePath).toHaveBeenCalledWith(path);
-        expect(getStats).toHaveBeenCalledWith('/ruta/al/archivo.md');
-        expect(extractLinksFromFile).toHaveBeenCalledWith('/ruta/al/archivo.md', options);
+        expect(getAbsolutePath).toHaveBeenCalledWith(path); // Verifica que se llamó a getAbsolutePath con la ruta correcta
+        expect(getStats).toHaveBeenCalledWith('/ruta/al/archivo.md'); // Verifica que se llamó a getStats con la ruta correcta
+        expect(extractLinksFromFile).toHaveBeenCalledWith('/ruta/al/archivo.md', options); // Verifica que se llamó a extractLinksFromFile con los parámetros correctos
       });
     });
   
@@ -51,30 +52,33 @@ import {
       const stats = { isFile: () => false, isDirectory: () => true };
       const links = [{ url: 'https://example.com', text: 'Ejemplo' }];
   
+      // Simula el comportamiento de las funciones llamadas en la prueba
       getAbsolutePath.mockReturnValue('/ruta/al/directorio');
       getStats.mockResolvedValue(stats);
       extractLinksFromDirectory.mockResolvedValue(links);
   
       return mdLinks(path, options).then((result) => {
         expect(result).toEqual(links);
-        expect(getAbsolutePath).toHaveBeenCalledWith(path);
-        expect(getStats).toHaveBeenCalledWith('/ruta/al/directorio');
-        expect(extractLinksFromDirectory).toHaveBeenCalledWith('/ruta/al/directorio', options);
+        expect(getAbsolutePath).toHaveBeenCalledWith(path); // Verifica que se llamó a getAbsolutePath con la ruta correcta
+        expect(getStats).toHaveBeenCalledWith('/ruta/al/directorio'); // Verifica que se llamó a getStats con la ruta correcta
+        expect(extractLinksFromDirectory).toHaveBeenCalledWith('/ruta/al/directorio', options); // Verifica que se llamó a extractLinksFromDirectory con los parámetros correctos
       });
     });
   
     test('debería rechazar con un error para una ruta inválida', () => {
       const path = '/ruta/invalida';
-      const error = new Error('Ruta inválida');
+      const error = new Error(`La ruta ${path} no existe`);
   
+      // Simula el comportamiento de las funciones llamadas en la prueba
       getAbsolutePath.mockReturnValue('/ruta/invalida');
       getStats.mockRejectedValue(error);
   
       return mdLinks(path).catch((err) => {
         expect(err).toBeInstanceOf(Error);
-        expect(err.message).toBe('Ruta inválida');
-        expect(getAbsolutePath).toHaveBeenCalledWith(path);
-        expect(getStats).toHaveBeenCalledWith('/ruta/invalida');
+        expect(err.message).toBe(`La ruta ${path} no existe`);
+        expect(getAbsolutePath).toHaveBeenCalledWith(path); // Verifica que se llamó a getAbsolutePath con la ruta correcta
+        expect(getStats).toHaveBeenCalledWith('/ruta/invalida'); // Verifica que se llamó a getStats con la ruta correcta
       });
     });
   });
+  

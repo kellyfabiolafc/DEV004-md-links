@@ -1,14 +1,14 @@
-
 import fs from "fs";
 import pathModule from "path";
-import 'whatwg-fetch';
+import "whatwg-fetch";
 import { extractLinksFromFile } from "./api-file.js";
+//--------------------------------------------------------------------------------------------------------------
 //funcion que debería devolver una ruta absoluta
 export const getAbsolutePath = (pathArg) => {
   return pathModule.isAbsolute(pathArg) ? pathArg : pathModule.resolve(pathArg);
 };
-
-//funcion que obtiene las estadísticas de un archivo o directorio especificado por la ruta absoluta. 
+//--------------------------------------------------------------------------------------------------------------
+//funcion que obtiene las estadísticas de un archivo o directorio especificado por la ruta absoluta.
 export const getStats = (routeAbsolute) => {
   return new Promise((resolve, reject) => {
     fs.stat(routeAbsolute, (err, stats) => {
@@ -20,18 +20,17 @@ export const getStats = (routeAbsolute) => {
     });
   });
 };
-
+//--------------------------------------------------------------------------------------------------------------
 //Funcion para comprobar si la ruta es un archivo
 export const isFile = (stats) => {
   return stats.isFile();
 };
-
-
+//--------------------------------------------------------------------------------------------------------------
 //Función para verificar si el archivo es de extension md
 export const isMarkdownFile = (file) => {
   return pathModule.extname(file) === ".md";
 };
-
+//--------------------------------------------------------------------------------------------------------------
 //La función readFile lee un archivo en formato UTF-8 y devuelve su contenido como una promesa.
 export const readFile = (filePath) => {
   //retronar una promesa
@@ -44,29 +43,37 @@ export const readFile = (filePath) => {
     });
   });
 };
+//--------------------------------------------------------------------------------------------------------------
 
 //La función findLinks encuentra y devuelve una lista de enlaces en un contenido dado.
 export const findLinks = (content, filePath) => {
+  // Expresión regular para buscar enlaces que estén en formato [texto](URL)
   const regex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/gm;
-  const links = [];
   
+  // Array donde se almacenarán los enlaces encontrados
+  const links = [];
+
   let match;
+  // Iterar mientras se encuentren coincidencias con la expresión regular
   while ((match = regex.exec(content)) !== null) {
+    // Crear un objeto para representar el enlace encontrado
     const link = {
-      href: match[2],
-      text: match[1],
-      file: filePath,
+      href: match[2],  // URL del enlace
+      text: match[1],  // Texto del enlace
+      file: filePath,  // Ruta del archivo donde se encuentra el enlace
     };
+    
+    // Agregar el objeto del enlace al array de enlaces
     links.push(link);
   }
-  
+
+  // Devolver el array de enlaces encontrados
   return links;
 };
 
+//--------------------------------------------------------------------------------------------------------------
 
-
-
-//función se utiliza para realizar solicitudes HTTP a enlaces y obtener su estado y estado de texto. 
+//función se utiliza para realizar solicitudes HTTP a enlaces y obtener su estado y estado de texto.
 export const fetchLinkStatus = (link) => {
   return new Promise((resolve) => {
     fetch(link.href)
@@ -82,7 +89,7 @@ export const fetchLinkStatus = (link) => {
       });
   });
 };
-
+//--------------------------------------------------------------------------------------------------------------
 // calcula estadísticas sobre los enlaces, incluyendo el total de enlaces, enlaces únicos y enlaces rotos (si se realiza la validación).
 export const getLinkStats = (links, options) => {
   const stats = {
@@ -96,46 +103,50 @@ export const getLinkStats = (links, options) => {
 
   return stats;
 };
-
-
-//funcion para extraer links de un directorio en caso se encuentren archivos
+//--------------------------------------------------------------------------------------------------------------
+//Extrae los enlaces de todos los archivos en un directorio y sus subdirectorios.
 export const extractLinksFromDirectory = (dirPath, options) => {
   return new Promise((resolve, reject) => {
-    readDir(dirPath).then((files) => {
-      const promises = files.map((file) => {
-        const filePath = pathModule.join(dirPath, file);
-        return new Promise((resolve) => {
-          getStats(filePath).then((stats) => {
-            if (isDirectory(stats)) {
-              // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
-              extractLinksFromDirectory(filePath, options)
-                .then((links) => resolve(links))
-                .catch(() => resolve([]));
-            } else if (isFile(stats)) {
-              // Si el archivo es un archivo Markdown, llamamos a extractLinksFromFile
-              extractLinksFromFile(filePath, options)
-                .then((links) => resolve(links))
-                .catch((err) => resolve(err));
-            } 
+    // Leer el contenido del directorio
+    readDir(dirPath)
+      .then((files) => {
+        const promises = files.map((file) => {
+          const filePath = pathModule.join(dirPath, file);
+          return new Promise((resolve) => {
+            // Obtener información del archivo
+            getStats(filePath).then((stats) => {
+              if (isDirectory(stats)) {
+                // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
+                extractLinksFromDirectory(filePath, options)
+                  .then((links) => resolve(links))
+                  .catch(() => resolve([]));
+              } else if (isFile(stats)) {
+                // Si el archivo es un archivo, llamamos a extractLinksFromFile
+                extractLinksFromFile(filePath, options)
+                  .then((links) => resolve(links))
+                  .catch((err) => resolve(err));
+              }
+            });
           });
         });
-      });
-      Promise.all(promises)
-      .then((results) => {
-        const links = results.flat();
-        try {
-          const validatedLinks = checkMdFilesWithLinks(links);
-          resolve(validatedLinks);
-        } catch (error) {
-          reject(error);
-        }
+        Promise.all(promises)
+          .then((results) => {
+            // Aplanamos el array de resultados para combinar todos los enlaces en un único array llamado links
+            const links = results.flat();
+            try {
+              // Validar los enlaces extraídos en archivos Markdown
+              const validatedLinks = checkMdFilesWithLinks(links);
+              resolve(validatedLinks);
+            } catch (error) {
+              reject(error);
+            }
+          })
+          .catch((err) => reject(err));
       })
       .catch((err) => reject(err));
-  })
-  .catch((err) => reject(err));
-});
+  });
 };
-
+//--------------------------------------------------------------------------------------------------------------
 export const readDir = (dirPath) => {
   return new Promise((resolve, reject) => {
     fs.readdir(dirPath, (err, files) => {
@@ -147,18 +158,20 @@ export const readDir = (dirPath) => {
     });
   });
 };
-
-
+//--------------------------------------------------------------------------------------------------------------
 //Funcion para comprobar si la ruta es un directorio
 export const isDirectory = (stats) => {
   return stats.isDirectory();
 };
-
+//--------------------------------------------------------------------------------------------------------------
 //función para verificar si hay enlaces válidos en una lista y manejar adecuadamente el caso en el que no se encuentren enlaces
 export const checkMdFilesWithLinks = (links) => {
+  //La expresión verifica si todos los elementos del array "links" son instancias de la clase "Error".
   const noMdFiles = links.every((link) => link instanceof Error);
   if (noMdFiles) {
-    throw new Error("No se encontraron archivos Markdown con enlaces en el directorio");
+    throw new Error(
+      "No se encontraron archivos Markdown con enlaces en el directorio"
+    );
   }
   return links;
 };
