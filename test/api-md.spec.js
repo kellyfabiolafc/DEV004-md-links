@@ -14,7 +14,6 @@ import {
 import pathModule from "path";
 import fs from "fs";
 import fetchMock from "jest-fetch-mock";
-
 import "whatwg-fetch";
 jest.mock("fs");
 jest.mock("whatwg-fetch");

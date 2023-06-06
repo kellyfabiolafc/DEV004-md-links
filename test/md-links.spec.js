@@ -75,7 +75,7 @@ import {
   
       return mdLinks(path).catch((err) => {
         expect(err).toBeInstanceOf(Error);
-        expect(err.message).toBe(`La ruta ${path} no existe`);
+        expect(err.message).toBe(`La ruta ${path} no es un archivo ni un directorio`);
         expect(getAbsolutePath).toHaveBeenCalledWith(path); // Verifica que se llamó a getAbsolutePath con la ruta correcta
         expect(getStats).toHaveBeenCalledWith('/ruta/invalida'); // Verifica que se llamó a getStats con la ruta correcta
       });

@@ -56,13 +56,11 @@ export const findLinks = (content, filePath) => {
   let match;
   // Iterar mientras se encuentren coincidencias con la expresión regular
   while ((match = regex.exec(content)) !== null) {
-    // Crear un objeto para representar el enlace encontrado
     const link = {
       href: match[2],  // URL del enlace
       text: match[1],  // Texto del enlace
       file: filePath,  // Ruta del archivo donde se encuentra el enlace
     };
-    
     // Agregar el objeto del enlace al array de enlaces
     links.push(link);
   }
@@ -119,7 +117,7 @@ export const extractLinksFromDirectory = (dirPath, options) => {
                 // Si el archivo es un directorio, llamamos recursivamente a extractLinksFromDirectory
                 extractLinksFromDirectory(filePath, options)
                   .then((links) => resolve(links))
-                  .catch(() => resolve([]));
+                  .catch((err) => resolve(err));
               } else if (isFile(stats)) {
                 // Si el archivo es un archivo, llamamos a extractLinksFromFile
                 extractLinksFromFile(filePath, options)

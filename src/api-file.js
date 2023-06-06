@@ -21,8 +21,9 @@ export const extractLinksFromFile = (filePath, options) => {
         if (options && options.validate) {
           // Si se solicita la validación de enlaces, realizar la validación
           const promises = links.map((link) => fetchLinkStatus(link));
-
+          //map() para crear un array de promesas basado en links
           Promise.all(promises)
+          //para esperar a que todas las promesas se resuelvan. 
             .then((validatedLinks) => {
               if (options && options.stats) {
                 // Si se solicita la generación de estadísticas, generar las estadísticas sobre los enlaces
